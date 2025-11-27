@@ -1,7 +1,7 @@
 # ☕ Ceyloncoffee
 ### *AI-Powered Decision Support for Sri Lankan Coffee Industry*
 
-This project is a multi component AI system designed to improve coffee farming, processing, logistics, and export decision making in Sri Lanka. Each module targets a specific real-world challenge from plant diseases to price prediction and resource allocation.
+This project is a multi component AI system designed to improve coffee farming, processing, logistics, and export decision making in Sri Lanka. Each module targets a specific real world challenge from plant diseases to price prediction and resource allocation.
 
 ---
 

@@ -1,97 +1,120 @@
-# Coffee AI Platform
+# ☕ Ceyloncoffee
+### *AI-Powered Decision Support for Sri Lankan Coffee Industry*
 
-> Smart tools to detect coffee plant diseases, predict yield & prices, and optimise labor & transport for Sri Lankan coffee producers.
-
-![CI](https://img.shields.io/badge/status-active-brightgreen)
-
-## Table of Contents
-
-- [About](#about)
-- [Key Components](#key-components)
-- [Features](#features)
-- [Architecture](#architecture)
-  - [Mermaid Diagram](#mermaid-diagram)
-  - [ASCII Diagram](#ascii-diagram)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Run locally](#run-locally)
-- [Folder Structure](#folder-structure)
-- [Models & Data](#models--data)
-- [API / Endpoints](#api--endpoints)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+This project is a multi-component AI system designed to improve coffee farming, processing, logistics, and export decision-making in Sri Lanka. Each module targets a specific real-world challenge—from plant diseases to price prediction and resource allocation.
 
 ---
 
-## About
-
-This project bundles a set of AI-powered modules tailored for Sri Lankan coffee production and supply chains. It includes image-based disease classification, yield prediction under disease stress, price & demand forecasting, labor & transport resource planning, and bean type & grade identification.
-
-## Key Components
-
-- **Disease Classification** — CNN-based image classifier for leaf/bean diseases (e.g., Leaf Rust, Cercospora).
-- **Yield Prediction** — Regression model to estimate yield per plant or plot.
-- **Price & Demand Prediction** — Time-series and econometric models for short/medium-term forecasting.
-- **Labor & Transport Forecasting** — Scheduling and optimization for workers and vehicles.
-- **Bean Type & Grade Identification** — Image model to classify bean variety and grade.
-- **Frontend & Dashboard** — User-facing web/mobile app for uploading images, viewing predictions, alerts and optimization dashboards.
-- **Backend & ML Pipeline** — API services, model serving, databases, and background workers.
-
-## Features
-
-- Upload leaf/bean images and get disease & grade predictions.
-- Batch yield forecasts and plantation-level aggregation.
-- Price and demand forecasts with explanatory factors (weather, macro indicators).
-- Labor/vehicle scheduling suggestions and alerts.
-- Simple exportable reports for exporters and farm managers.
+## 📌 Project Components Overview
 
 ---
 
-## Architecture
+## 1️⃣ Coffee Plant Disease Detection & Yield Prediction  
+**Owner:** Aloka A.M.R.V
 
-The architecture below maps the main components and data flow (ML training, inference, and operational tooling).
+### 🔍 Key Components
+- Disease classification model  
+- Yield prediction model  
+- User-friendly frontend
 
-### Mermaid Diagram
+### 🎯 Objectives
+- Identify coffee plant diseases using image classification  
+- Predict production yield per plant or plot  
+- Scale from small-farm analysis to plantation-level forecasting  
 
-```mermaid
-flowchart LR
-  subgraph U[Users]
-    Web[Web Dashboard / Admin] -->|HTTPS| GW[API Gateway]
-    Mobile[Mobile App / Field App] -->|HTTPS| GW
-    FieldDevice[Field Camera/Phone] -->|HTTPS| GW
-  end
+---
 
-  subgraph S[Services]
-    GW --> Auth[Auth Service (JWT/OAuth)]
-    GW --> API[API Service (Inference, Aggregation)]
-    API --> ML[Model Serving (TF/ONNX/GPU)]
-    API --> DB[(Postgres / TimescaleDB)]
-    API --> Cache[Redis Cache]
-    API --> MQ[Message Queue (RabbitMQ / SQS / Kafka)]
-    MQ --> Worker[Workers: Preprocessing, Batch Jobs]
-    Worker --> FeatureStore[Feature Store]
-    ML --> FeatureStore
-    ML --> ModelRepo[Model Registry]
-    Worker --> Storage[S3 / Object Storage (images, artifacts)]
-  end
+## 2️⃣ Coffee Price & Demand Prediction  
+**Owner:** Jayalath M.D.T.L
 
-  subgraph External[External Data]
-    Weather[Weather API] --> ETL[Data Ingest]
-    Market[Market / Price Feeds] --> ETL
-    ETL --> DB
-  end
+### 🔍 Key Components
+- Price prediction model  
+- Demand prediction model  
+- AI advisory module for exporters  
 
-  subgraph Ops[Monitoring & CI/CD]
-    CI[CI/CD Pipeline] --> ModelRepo
-    Prom[Prometheus / Grafana] <-- API
-  end
+### 🎯 Objectives
+- Predict global and Sri Lankan coffee prices (short & medium term)  
+- Forecast domestic and export demand  
+- Use economic, weather, and market data for predictions  
+- Assist farmers, exporters, and policymakers  
 
-  Auth --> DB
-  API --> Storage
-  FeatureStore --> DB
-  style U fill:#f9f,stroke:#333,stroke-width:1px
-  style S fill:#f2f2f2,stroke:#333,stroke-width:1px
-  style External fill:#fff3cd,stroke:#333,stroke-width:1px
-  style Ops fill:#e8f6ff,stroke:#333,stroke-width:1px
+---
+
+## 3️⃣ Predictive Resource Allocation (Labor & Transportation)  
+**Owner:** Rumalya
+
+### 🔍 Key Components
+- Labor forecasting model  
+- Transportation demand prediction model  
+- Scheduling & optimization dashboard  
+
+### 🎯 Objectives
+- Predict required workers for harvesting, loading, etc.  
+- Estimate vehicles needed for bean transport (daily → seasonal)  
+- Reduce extra cost & waiting time  
+- Connect with yield/weather data for improved accuracy  
+- Provide dashboards with schedules, costs, and alerts  
+
+---
+
+## 4️⃣ Coffee Bean Type & Grade Identification  
+**Owner:** S.S. Liyanage
+
+### 🔍 Key Components
+- Coffee bean image dataset (Sri Lankan varieties)  
+- CNN-based image classification model  
+- Web/mobile app for prediction  
+
+### 🎯 Objectives
+- Identify bean type (Arabica, Robusta)  
+- Identify grade based on defects, size, color  
+- Help farmers & exporters ensure quality  
+- Support Sri Lankan beans in meeting global quality standards  
+ 
+---
+
+## 🧠 Technologies Used
+- Python  
+- TensorFlow / PyTorch  
+- Machine Learning (Regression, Classification)  
+- Computer Vision (CNNs)  
+- Data Preprocessing  
+- Web Frontend  
+- Scheduling algorithms  
+
+---
+
+## 📈 Why This Project Matters
+Sri Lanka’s coffee industry faces challenges in:
+- Disease monitoring  
+- Yield estimation  
+- Market forecasting  
+- Labor and transportation planning  
+- Bean grading and quality assurance  
+
+This system uses AI to modernize the entire supply chain and improve export competitiveness.
+
+---
+
+## 🚀 Future Enhancements
+- IoT integration (weather, soil sensors)  
+- Real-time dashboards  
+- Drone-based imaging  
+- Blockchain for supply chain tracking  
+- Regional multi-farm integration  
+
+---
+
+## 📝 Contributors
+| Name | Component |
+|------|-----------|
+| **Aloka A.M.R.V** | Disease Detection & Yield Prediction |
+| **Jayalath M.D.T.L** | Price & Demand Prediction |
+| **Rumalya** | Resource Allocation (Labor & Transport) |
+| **S.S. Liyanage** | Bean Type & Grade Identification |
+
+---
+
+
+
+

@@ -114,6 +114,7 @@ This system uses AI to modernize the entire supply chain and improve export comp
 | **S.S. Liyanage** | Bean Type & Grade Identification |
 
 ---
+<img src="IMAGE_URL_HERE" alt="Ceylon Coffee Logo" width="300">
 
 
 

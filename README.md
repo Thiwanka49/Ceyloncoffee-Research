@@ -109,12 +109,12 @@ This system uses AI to modernize the entire supply chain and improve export comp
 
 ## 👥 Group Details
 
-| Name                | Components      	    |      Email	                |  GitHub Profile	            | Status
-| -------------       | -------------------- |  ------------------------- |  -------------------------- | ----------------------
-| ALOKA A.M.R.V       | IT22312662           |  IT22312662@my.sliit.lk    |   @VishvaAloka              |  ⭐Leader
-| Jayalath M.D. T. L  | IT22328366           |  IT22328366@my.sliit.lk    |    @Thiwanka                |   👨‍💻Member
-| Liyanage S.S        | IT22310682           |  IT22310682@my.sliit.lk    |    @Sahan                   |   👨‍💻Member
-| Mahadurage R.N      | IT22582638           |  IT22582638@my.sliit.lk    |     @Rumalya                |   👨‍💻Member
+| Name                | Components      	    |      Email	                |  GitHub Profile	                                  | Status
+| -------------       | -------------------- |  ------------------------- |  ------------------------------------------------ | ----------------------
+| ALOKA A.M.R.V       | IT22312662           |  IT22312662@my.sliit.lk    |   [@VishvaAloka](https://github.com/VishvaAloka)  |  ⭐Leader
+| Jayalath M.D. T. L  | IT22328366           |  IT22328366@my.sliit.lk    |   [@Thiwanka](https://github.com/Thiwanka49)      |   👨‍💻Member
+| Liyanage S.S        | IT22310682           |  IT22310682@my.sliit.lk    |   [@Sahan](https://github.com/Sahan003)           |   👨‍💻Member
+| Mahadurage R.N      | IT22582638           |  IT22582638@my.sliit.lk    |   [@Rumalya](https://github.com/RumalyaNeli)      |   👨‍💻Member
 
 
 

@@ -29,6 +29,85 @@ def get_seasonal_features(month):
     month_cos = np.cos(2 * np.pi * month / 12)
     return month_sin, month_cos
 
+def get_ai_advisory(price, demand_idx, global_price_lkr):
+    # Determine Demand Level
+    # More sensitive thresholds
+    if demand_idx > 1.05:
+        demand_lvl = "High"
+    elif demand_idx < 0.95:
+        demand_lvl = "Low"
+    else:
+        demand_lvl = "Stable"
+    
+    # Determine Price Level (relative to global parity)
+    # Refined parity check: Local price is usually 90-100% of global parity
+    parity_ratio = price / global_price_lkr
+    if parity_ratio > 0.98:
+        price_lvl = "High"
+    elif parity_ratio < 0.92:
+        price_lvl = "Low"
+    else:
+        price_lvl = "Stable"
+
+    advisory = {
+        ("High", "High"): {
+            "title": "Maximize Export Volume",
+            "message": "Market conditions are ideal. Both demand and prices are at peak levels. We recommend fast-tracking all pending shipments and negotiating premium long-term contracts.",
+            "action": "Increase Shipments",
+            "color": "#4ade80"
+        },
+        ("High", "Stable"): {
+            "title": "Capitalize on Demand",
+            "message": "Strong market demand with steady pricing. This is an excellent time to expand your buyer network and push high-volume inventory to clear stocks.",
+            "action": "Liquidate Stock",
+            "color": "#fbbf24"
+        },
+        ("High", "Low"): {
+            "title": "Focus on Market Share",
+            "message": "Demand is high but prices are currently suppressed. Prioritize building relationships and fulfilling urgent orders, but avoid committing your entire stock to low-price contracts.",
+            "action": "Selective Shipping",
+            "color": "#f87171"
+        },
+        ("Stable", "High"): {
+            "title": "Secure Profit Margins",
+            "message": "Prices are favorable despite stable demand. Focus on quality-conscious buyers who are willing to pay the current premium. Ensure efficient logistics to maximize net gains.",
+            "action": "Optimize Logistics",
+            "color": "#60a5fa"
+        },
+        ("Stable", "Stable"): {
+            "title": "Maintain Steady Supply",
+            "message": "Market is in equilibrium. Continue with planned export schedules. Focus on operational efficiency and maintaining consistent quality to keep repeat customers.",
+            "action": "Consistent Flow",
+            "color": "#94a3b8"
+        },
+        ("Stable", "Low"): {
+            "title": "Defensive Strategy",
+            "message": "Stable demand but disappointing prices. Minimize overheads and fulfill only necessary contracts. It may be wise to delay non-urgent shipments until prices recover.",
+            "action": "Reduce Overheads",
+            "color": "#fca5a5"
+        },
+        ("Low", "High"): {
+            "title": "Prioritize Quality over Volume",
+            "message": "Prices are high but demand is sluggish. Target specialty niche markets and premium boutiques that value high-grade Ceylon coffee. Every kilogram sold now yields high returns.",
+            "action": "Target Niche",
+            "color": "#a78bfa"
+        },
+        ("Low", "Stable"): {
+            "title": "Build Inventory & Brand",
+            "message": "Low demand with stable prices. Use this period for processing, advanced grading, and enhancing your brand story. Prepare for the next demand cycle.",
+            "action": "Brand Building",
+            "color": "#94a3b8"
+        },
+        ("Low", "Low"): {
+            "title": "Hold Stock & Invest in Quality",
+            "message": "Both demand and prices are at a seasonal low. We advise holding back large shipments. Focus on improving farm infrastructure and coffee processing techniques for future gains.",
+            "action": "Strategic Holding",
+            "color": "#ef4444"
+        }
+    }
+
+    return advisory.get((demand_lvl, price_lvl), advisory[("Stable", "Stable")])
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -51,54 +130,41 @@ def predict():
 
         # 1. Predict Demand Index First
         # Demand Features: ['local_coffee_price_lkr_per_kg', 'global_price_usd_kg', 'usd_lkr_rate', 'month_sin', 'month_cos']
-        # Note: We need a 'local_price' to predict demand index according to the model training.
-        # However, the user usually wants to see price based on demand.
-        # In the training data, demand index was calculated using historical price.
-        # Let's estimate local price for demand prediction based on a simplified formula if not provided,
-        # OR just use the global price equivalent as a proxy if appropriate.
-        # Actually, let's look at how the generator did it.
-        # Generator: price = base_price * supply_factor * demand_index
-        # Demand: base + noise (seasonal)
-        
-        # To keep it simple and robust for the UI:
-        # We will use the models as trained. 
-        # For the Demand model, we'll use a conservative estimate for 'local_coffee_price_lkr_per_kg'
-        # or ask for it. But usually, these factors are interdependent.
-        # Let's use (global_price * usd_lkr_rate) as the 'local_price' proxy for demand prediction.
         local_price_proxy = global_price_usd_kg * usd_lkr_rate
-
-        demand_features = np.array([[
-            local_price_proxy,
-            global_price_usd_kg,
-            usd_lkr_rate,
-            m_sin,
-            m_cos
-        ]])
         
-        demand_idx = float(demand_model.predict(demand_features)[0])
+        demand_df = pd.DataFrame([{
+            'local_coffee_price_lkr_per_kg': local_price_proxy,
+            'global_price_usd_kg': global_price_usd_kg,
+            'usd_lkr_rate': usd_lkr_rate,
+            'month_sin': m_sin,
+            'month_cos': m_cos
+        }])
+        
+        demand_idx = float(demand_model.predict(demand_df)[0])
         
         # Calibrate Demand Index:
         # The raw model output tends to hover around 1.08 for average inputs.
-        # We apply an offset to center the baseline around 1.0 (Stable).
         calibration_offset = 0.08
         demand_idx = demand_idx - calibration_offset
-        
-        # Widen clipping range to allow for more variation
         demand_idx = round(np.clip(demand_idx, 0.5, 1.5), 2)
 
         # 2. Predict Price
         # Price Features: ['predicted_yield_kg', 'global_price_usd_kg', 'usd_lkr_rate', 'demand_index', 'month_sin', 'month_cos']
-        price_features = np.array([[
-            predicted_yield_kg,
-            global_price_usd_kg,
-            usd_lkr_rate,
-            demand_idx,
-            m_sin,
-            m_cos
-        ]])
+        price_df = pd.DataFrame([{
+            'predicted_yield_kg': predicted_yield_kg,
+            'global_price_usd_kg': global_price_usd_kg,
+            'usd_lkr_rate': usd_lkr_rate,
+            'demand_index': demand_idx,
+            'month_sin': m_sin,
+            'month_cos': m_cos
+        }])
         
-        predicted_price = float(price_model.predict(price_features)[0])
+        predicted_price = float(price_model.predict(price_df)[0])
         predicted_price = round(predicted_price, 2)
+
+        # 3. Generate Advisory
+        global_price_lkr = global_price_usd_kg * usd_lkr_rate
+        advisory = get_ai_advisory(predicted_price, demand_idx, global_price_lkr)
 
         return jsonify({
             "status": "success",
@@ -106,6 +172,7 @@ def predict():
                 "demand_index": demand_idx,
                 "local_price_lkr": predicted_price
             },
+            "advisory": advisory,
             "inputs": {
                 "year": year,
                 "month": month,

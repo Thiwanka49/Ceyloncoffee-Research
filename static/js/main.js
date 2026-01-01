@@ -61,6 +61,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     demandStatus.style.color = '#94a3b8';
                 }
 
+                // AI Advisory
+                const advisoryCard = document.getElementById('advisory-card');
+                const advisoryTitle = document.getElementById('advisory-title');
+                const advisoryMessage = document.getElementById('advisory-message');
+                const advisoryAction = document.getElementById('advisory-action');
+
+                advisoryCard.style.display = 'block';
+                advisoryCard.style.opacity = '0';
+                advisoryTitle.textContent = data.advisory.title;
+                advisoryMessage.textContent = data.advisory.message;
+                advisoryAction.textContent = data.advisory.action;
+                advisoryAction.style.borderColor = data.advisory.color;
+                advisoryAction.style.color = data.advisory.color;
+                advisoryAction.style.background = `${data.advisory.color}15`;
+
+                // Fade in effect
+                setTimeout(() => {
+                    advisoryCard.style.transition = 'opacity 0.5s ease';
+                    advisoryCard.style.opacity = '1';
+                }, 100);
+
             } else {
                 alert('Error: ' + data.error);
             }
@@ -75,11 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function animateValue(obj, end, duration) {
         let startTimestamp = null;
-        const start = parseFloat(obj.textContent) || 0;
+        const currentText = obj.textContent.replace(/,/g, '');
+        const start = parseFloat(currentText) || 0;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+            const current = Math.floor(progress * (end - start) + start);
+            obj.textContent = current.toLocaleString();
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }

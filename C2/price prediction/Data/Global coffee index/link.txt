@@ -1,0 +1,3 @@
+https://www.macrotrends.net/2535/coffee-prices-historical-chart-data
+
+historical daily coffee prices back to 1969. The price shown is in U.S. Dollars per pound

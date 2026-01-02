@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #3E2723;
-    /* Deep Espresso */
+    --primary-color: #6D4C41;
+    /* Medium Roast / Light Brown */
     --accent-color: #8D6E63;
     /* Warm Latte */
     --highlight-color: #D7CCC8;
@@ -189,7 +189,7 @@ h2 {
     width: 100%;
     margin-top: 20px;
     padding: 16px;
-    background: linear-gradient(135deg, var(--primary-color), #5D4037);
+    background: linear-gradient(135deg, var(--primary-color), #4E342E);
     color: white;
     border: none;
     border-radius: var(--radius-md);

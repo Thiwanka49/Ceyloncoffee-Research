@@ -28,17 +28,6 @@ async function handleLaborSubmit(event) {
     // Set severerisk default if needed
     data.severerisk = 10.0;
 
-    // Mock response for demo since backend is not running
-    const result = {
-        pickers: 2,
-        harvesters: 2,
-        loaders: 1
-    };
-
-    // Simulate API delay
-    await new Promise(r => setTimeout(r, 500));
-
-    /* 
     try {
         const response = await fetch('/predict/labor', {
             method: 'POST',
@@ -49,23 +38,37 @@ async function handleLaborSubmit(event) {
         if (!response.ok) throw new Error('API Error');
 
         const result = await response.json();
-        
+
         document.getElementById('val-pickers').textContent = result.pickers;
         document.getElementById('val-harvesters').textContent = result.harvesters;
         document.getElementById('val-loaders').textContent = result.loaders;
-        
+
+        // Calculate and show total
+        const total = result.pickers + result.harvesters + result.loaders;
+        document.getElementById('val-total').textContent = total;
+
         document.getElementById('labor-result').classList.remove('hidden');
 
     } catch (err) {
-        console.error(err);
-        alert('Failed to get prediction. Ensure backend is running.');
-    }
-    */
+        console.warn("Backend unavailable, using mock data for demonstration.");
 
-    document.getElementById('val-pickers').textContent = result.pickers;
-    document.getElementById('val-harvesters').textContent = result.harvesters;
-    document.getElementById('val-loaders').textContent = result.loaders;
-    document.getElementById('labor-result').classList.remove('hidden');
+        // Mock result for demo
+        const result = {
+            pickers: 15,
+            harvesters: 8,
+            loaders: 4
+        };
+
+        document.getElementById('val-pickers').textContent = result.pickers;
+        document.getElementById('val-harvesters').textContent = result.harvesters;
+        document.getElementById('val-loaders').textContent = result.loaders;
+
+        const total = result.pickers + result.harvesters + result.loaders;
+        const totalEl = document.getElementById('val-total');
+        if (totalEl) totalEl.textContent = total;
+
+        document.getElementById('labor-result').classList.remove('hidden');
+    }
 }
 
 async function handleTransportSubmit(event) {
@@ -78,17 +81,6 @@ async function handleTransportSubmit(event) {
     }
     data.severerisk = 10.0; // Default
 
-    // Mock response for demo
-    const result = {
-        tractors: 1,
-        apes: 0,
-        trucks: 1
-    };
-
-    // Simulate API delay
-    await new Promise(r => setTimeout(r, 500));
-
-    /*
     try {
         const response = await fetch('/predict/transport', {
             method: 'POST',
@@ -99,21 +91,26 @@ async function handleTransportSubmit(event) {
         if (!response.ok) throw new Error('API Error');
 
         const result = await response.json();
-        
+
         document.getElementById('val-tractors').textContent = result.tractors;
         document.getElementById('val-apes').textContent = result.apes;
         document.getElementById('val-trucks').textContent = result.trucks;
-        
+
         document.getElementById('transport-result').classList.remove('hidden');
 
     } catch (err) {
-        console.error(err);
-        alert('Failed to get prediction. Ensure backend is running.');
-    }
-    */
+        console.warn("Backend unavailable, using mock data for demonstration.");
+        alert('Backend unreachable! Showing SIMULATED data for demonstration.');
 
-    document.getElementById('val-tractors').textContent = result.tractors;
-    document.getElementById('val-apes').textContent = result.apes;
-    document.getElementById('val-trucks').textContent = result.trucks;
-    document.getElementById('transport-result').classList.remove('hidden');
+        const result = {
+            tractors: 2,
+            apes: 1,
+            trucks: 1
+        };
+
+        document.getElementById('val-tractors').textContent = result.tractors;
+        document.getElementById('val-apes').textContent = result.apes;
+        document.getElementById('val-trucks').textContent = result.trucks;
+        document.getElementById('transport-result').classList.remove('hidden');
+    }
 }

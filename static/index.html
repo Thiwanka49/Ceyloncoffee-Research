@@ -1,131 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Inference Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ceylon Coffee AI</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <header>
-            <h1>Resource Prediction</h1>
-            <p>AI-Powered Demand Forecasting</p>
+            <h1>☕ Ceylon Coffee</h1>
+            <p>Smart Forecast & Analytics</p>
         </header>
 
         <nav class="tabs">
-            <button class="tab-btn active" data-target="labor-form">Labor Demand</button>
-            <button class="tab-btn" data-target="transport-form">Transport Demand</button>
+            <button class="tab-btn active" data-target="labor-form" onclick="switchTab('labor-form')">Labor</button>
+            <button class="tab-btn" data-target="transport-form"
+                onclick="switchTab('transport-form')">Transport</button>
         </nav>
 
         <main>
             <!-- LABOR FORM -->
             <section id="labor-form" class="form-card active">
-                <h2>Labor Inputs</h2>
+                <h2>Labor Demand</h2>
                 <form onsubmit="handleLaborSubmit(event)">
-                    <div class="input-group">
-                        <label>Area (Ha)</label>
-                        <input type="number" step="0.01" name="area_ha" value="1.5" required>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Area (Ha)</label>
+                            <input type="number" step="0.01" name="area_ha" value="1.5" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Yield (kg/Ha)</label>
+                            <input type="number" step="0.1" name="predicted_yield_kg_per_ha" value="620.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Temp (°C)</label>
+                            <input type="number" step="0.1" name="temp" value="27.5" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Feels Like</label>
+                            <input type="number" step="0.1" name="feelslike" value="29.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Humidity (%)</label>
+                            <input type="number" step="0.1" name="humidity" value="78.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Precip (mm)</label>
+                            <input type="number" step="0.1" name="precip" value="12.0" required>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Month (1-12)</label>
+                            <input type="number" name="month" value="7" min="1" max="12" required>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Yield (kg/Ha)</label>
-                        <input type="number" step="0.1" name="predicted_yield_kg_per_ha" value="620.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Temp (°C)</label>
-                        <input type="number" step="0.1" name="temp" value="27.5" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Feels Like (°C)</label>
-                        <input type="number" step="0.1" name="feelslike" value="29.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Humidity (%)</label>
-                        <input type="number" step="0.1" name="humidity" value="78.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Precipitation (mm)</label>
-                        <input type="number" step="0.1" name="precip" value="12.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Month</label>
-                        <input type="number" name="month" value="7" min="1" max="12" required>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Predict Labor</button>
+
+                    <button type="submit" class="submit-btn">Predict Labor Demand</button>
                 </form>
 
                 <div id="labor-result" class="result-box hidden">
-                    <h3>Prediction Result</h3>
+                    <h3>Estimated Requirements</h3>
                     <div class="result-grid">
                         <div class="result-item">
-                            <span class="label">Pickers</span>
                             <span class="value" id="val-pickers">-</span>
+                            <span class="label">Pickers</span>
                         </div>
                         <div class="result-item">
-                            <span class="label">Harvesters</span>
                             <span class="value" id="val-harvesters">-</span>
+                            <span class="label">Harvesters</span>
                         </div>
                         <div class="result-item">
-                            <span class="label">Loaders</span>
                             <span class="value" id="val-loaders">-</span>
+                            <span class="label">Loaders</span>
                         </div>
+                    </div>
+                    <!-- Added Total Section with new class -->
+                    <div class="total-section">
+                        <span class="label">Total Workers:</span>
+                        <span id="val-total" class="value">-</span>
                     </div>
                 </div>
             </section>
 
             <!-- TRANSPORT FORM -->
             <section id="transport-form" class="form-card">
-                <h2>Transport Inputs</h2>
+                <h2>Transport Demand</h2>
                 <form onsubmit="handleTransportSubmit(event)">
-                    <div class="input-group">
-                        <label>Area (Ha)</label>
-                        <input type="number" step="0.01" name="area_ha" value="1.5" required>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Area (Ha)</label>
+                            <input type="number" step="0.01" name="area_ha" value="1.5" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Yield (kg/Ha)</label>
+                            <input type="number" step="0.1" name="predicted_yield_kg_per_ha" value="620.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Temp (°C)</label>
+                            <input type="number" step="0.1" name="temp" value="27.5" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Feels Like</label>
+                            <input type="number" step="0.1" name="feelslike" value="29.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Humidity (%)</label>
+                            <input type="number" step="0.1" name="humidity" value="78.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Precip (mm)</label>
+                            <input type="number" step="0.1" name="precip" value="18.0" required>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Month (1-12)</label>
+                            <input type="number" name="month" value="7" min="1" max="12" required>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Yield (kg/Ha)</label>
-                        <input type="number" step="0.1" name="predicted_yield_kg_per_ha" value="620.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Temp (°C)</label>
-                        <input type="number" step="0.1" name="temp" value="27.5" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Feels Like (°C)</label>
-                        <input type="number" step="0.1" name="feelslike" value="29.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Humidity (%)</label>
-                        <input type="number" step="0.1" name="humidity" value="78.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Precipitation (mm)</label>
-                        <input type="number" step="0.1" name="precip" value="18.0" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Month</label>
-                        <input type="number" name="month" value="7" min="1" max="12" required>
-                    </div>
-                    <!-- Severerisk hidden default -->
-                    
-                    <button type="submit" class="submit-btn">Predict Transport</button>
+
+                    <button type="submit" class="submit-btn">Predict Transport Demand</button>
                 </form>
 
                 <div id="transport-result" class="result-box hidden">
-                    <h3>Prediction Result</h3>
+                    <h3>Estimated Vehicles</h3>
                     <div class="result-grid">
                         <div class="result-item">
-                            <span class="label">Tractors</span>
                             <span class="value" id="val-tractors">-</span>
+                            <span class="label">Tractors</span>
                         </div>
                         <div class="result-item">
-                            <span class="label">APEs</span>
                             <span class="value" id="val-apes">-</span>
+                            <span class="label">APEs</span>
                         </div>
                         <div class="result-item">
-                            <span class="label">Trucks</span>
                             <span class="value" id="val-trucks">-</span>
+                            <span class="label">Trucks</span>
                         </div>
                     </div>
                 </div>
@@ -134,4 +149,5 @@
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,14 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Datasets (do NOT upload)
+datasets/
+
+# Model weights (do NOT upload)
+models/*.pt
+
+# OS junk
+.DS_Store
+Thumbs.db

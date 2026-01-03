@@ -1,126 +1,15 @@
-# ☕ Ceyloncoffee
-### *AI Powered Decision Support for Sri Lankan Coffee Industry*
+> Why do I have a folder named ".expo" in my project?
 
-This project is a multi component AI system designed to improve coffee farming, processing, logistics, and export decision making in Sri Lanka. Each module targets a specific real world challenge from plant diseases to price prediction and resource allocation.
+The ".expo" folder is created when an Expo project is started using "expo start" command.
 
----
+> What do the files contain?
 
-## 📌 Project Components Overview
+- "devices.json": contains information about devices that have recently opened this project. This is used to populate the "Development sessions" list in your development builds.
+- "packager-info.json": contains port numbers and process PIDs that are used to serve the application to the mobile device/simulator.
+- "settings.json": contains the server configuration that is used to serve the application manifest.
 
----
+> Should I commit the ".expo" folder?
 
-## 1️⃣ Coffee Plant Disease Detection & Yield Prediction  
-**Owner:** Aloka A.M.R.V
+No, you should not share the ".expo" folder. It does not contain any information that is relevant for other developers working on the project, it is specific to your machine.
 
-### 🔍 Key Components
-- Disease classification model  
-- Yield prediction model  
-- User-friendly frontend
-
-### 🎯 Objectives
-- Identify coffee plant diseases using image classification  
-- Predict production yield per plant or plot  
-- Scale from small farm analysis to plantation-level forecasting  
-
----
-
-## 2️⃣ Coffee Price & Demand Prediction  
-**Owner:** Jayalath M.D.T.L
-
-### 🔍 Key Components
-- Price prediction model  
-- Demand prediction model  
-- AI advisory module for exporters  
-
-### 🎯 Objectives
-- Predict global and Sri Lankan coffee prices (short & medium term)  
-- Forecast domestic and export demand  
-- Use economic, weather, and market data for predictions  
-- Assist farmers, exporters, and policymakers  
-
----
-
-## 3️⃣ Predictive Resource Allocation (Labor & Transportation)  
-**Owner:** Rumalya
-
-### 🔍 Key Components
-- Labor forecasting model  
-- Transportation demand prediction model  
-- Scheduling & optimization dashboard  
-
-### 🎯 Objectives
-- Predict required workers for harvesting, loading, etc.  
-- Estimate vehicles needed for bean transport (daily → seasonal)  
-- Reduce extra cost & waiting time  
-- Connect with yield/weather data for improved accuracy  
-- Provide dashboards with schedules, costs, and alerts  
-
----
-
-## 4️⃣ Coffee Bean Type & Grade Identification  
-**Owner:** S.S. Liyanage
-
-### 🔍 Key Components
-- Coffee bean image dataset (Sri Lankan varieties)  
-- CNN-based image classification model  
-- Web/mobile app for prediction  
-
-### 🎯 Objectives
-- Identify bean type (Arabica, Robusta)  
-- Identify grade based on defects, size, color  
-- Help farmers & exporters ensure quality  
-- Support Sri Lankan beans in meeting global quality standards  
- 
----
-
-## 🧠 Technologies Used
-- Python  
-- TensorFlow / PyTorch  
-- Machine Learning (Regression, Classification)  
-- Computer Vision (CNNs)  
-- Data Preprocessing  
-- Web Frontend  
-- Scheduling algorithms  
-
----
-
-## 📈 Why This Project Matters
-Sri Lanka’s coffee industry faces challenges in:
-- Disease monitoring  
-- Yield estimation  
-- Market forecasting  
-- Labor and transportation planning  
-- Bean grading and quality assurance  
-
-This system uses AI to modernize the entire supply chain and improve export competitiveness.
-
----
-
-## 🚀 Future Enhancements
-- IoT integration (weather, soil sensors)  
-- Real-time dashboards  
-- Drone-based imaging  
-- Blockchain for supply chain tracking  
-- Regional multi-farm integration  
-
----
-
-## 👥 Group Details
-| Name                | Components      	    |      Email	                |  GitHub Profile	                               | Status
-| -------------       | -------------------- |  ------------------------- |  ----------------------------------------------| ----------------------
-| ALOKA A.M.R.V       | IT22312662           |  IT22312662@my.sliit.lk    | [@VishvaAloka](https://github.com/VishvaAloka) |  ⭐Leader
-| Jayalath M.D. T. L  | IT22328366           |  IT22328366@my.sliit.lk    | [@Thiwanka](https://github.com/Thiwanka49)     |   👨‍💻Member
-| S.S Liyanage        | IT22310682           |  IT22310682@my.sliit.lk    | [@Sahan](https://github.com/Sahan003)          |   👨‍💻Member
-| Mahadurage R.N      | IT22582638           |  IT22582638@my.sliit.lk    | [@Rumalya](https://github.com/RumalyaNeli)     |   👨‍💻Member
-
-
----
-
-<p align="center">
-<img src="https://github.com/Thiwanka49/Ceyloncofee-Research/blob/main/550847209_671150316017200_6014927099350871654_n.jpg" alt="Ceylon Coffee Logo" width="300"></center>
-</p>
-
----
-
-
-
+Upon project creation, the ".expo" folder is already added to your ".gitignore" file.

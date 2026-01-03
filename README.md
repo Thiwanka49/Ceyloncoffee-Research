@@ -69,7 +69,7 @@ The third component focuses on Predictive Resource Allocation for Labor and Tran
 ### 🔍 Key Components
 - Coffee bean image dataset (Sri Lankan varieties)  
 - CNN-based image classification model  
-- Web/mobile app for prediction  
+- IOT device for bean identification & grading  
 
 ### 🎯 Objectives
 - Identify bean type (Arabica, Robusta)  
@@ -81,11 +81,10 @@ The third component focuses on Predictive Resource Allocation for Labor and Tran
 
 ## 🧠 Technologies Used
 - Python  
-- TensorFlow / PyTorch  
+- MobileNetV3 / PyTorch  
 - Machine Learning (Regression, Classification)  
 - Computer Vision (CNNs)  
 - Data Preprocessing  
-- Web Frontend  
 - Scheduling algorithms  
 
 ---

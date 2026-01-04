@@ -10,7 +10,10 @@ The second component addresses Coffee Price and Demand Prediction at both domest
 The third component focuses on Predictive Resource Allocation for Labor and Transportation. This module forecasts the number of workers required for harvesting, picking, and loading on daily, weekly, monthly, and yearly bases. It also predicts transportation needs for moving coffee beans from farms to processing factories in both short term and medium-term horizons. By considering harvest size, weather conditions, road quality, and vehicle availability, the system minimizes inefficiencies, reduces costs, and prevents delays. A scheduling and optimization dashboard provides managers with real-time visibility into workforce plans, transport requirements, cost estimates, and alerts for resource shortages.
 
 The fourth component focuses on automated coffee bean quality assessment using image-based deep learning models. It is designed to classify coffee beans into Arabica and Robusta types and to identify quality conditions such as Good, Broken, and Severe Defect from single images captured under real-world conditions. The system uses convolutional neural networks trained on locally collected Sri Lankan coffee bean datasets. The models support confidence-based predictions to reduce misclassification in uncertain cases, ensuring reliable quality evaluation during sorting, packaging, and export preparation. This module helps improve consistency in grading, reduce manual inspection effort, and support higher quality standards in the coffee export process.
-
+---
+<p align="center">
+<img src="https://github.com/Thiwanka49/Ceyloncofee-Research/blob/main/550847209_671150316017200_6014927099350871654_n.jpg" alt="Ceylon Coffee Logo" width="300"></center>
+</p>
 ---
 
 ## 📌 Project Components Overview

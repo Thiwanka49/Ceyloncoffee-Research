@@ -12,8 +12,8 @@ The third component focuses on Predictive Resource Allocation for Labor and Tran
 The fourth component focuses on automated coffee bean quality assessment using image-based deep learning models. It is designed to classify coffee beans into Arabica and Robusta types and to identify quality conditions such as Good, Broken, and Severe Defect from single images captured under real-world conditions. The system uses convolutional neural networks trained on locally collected Sri Lankan coffee bean datasets. The models support confidence-based predictions to reduce misclassification in uncertain cases, ensuring reliable quality evaluation during sorting, packaging, and export preparation. This module helps improve consistency in grading, reduce manual inspection effort, and support higher quality standards in the coffee export process.
 
 ---
-<p align="center">
-<img src="https://github.com/Thiwanka49/Ceyloncoffee-Research/blob/main/Untitled%20Diagram.drawio.png" alt="Main diagram" width="300"></center>
+<p>
+<img src="https://github.com/Thiwanka49/Ceyloncoffee-Research/blob/main/Untitled%20Diagram.drawio.png" alt="Main diagram" width="1200"">
 </p>
 
 ---

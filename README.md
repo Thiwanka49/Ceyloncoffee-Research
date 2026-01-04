@@ -13,7 +13,7 @@ The fourth component focuses on automated coffee bean quality assessment using i
 
 ---
 <p align="center">
-<img src="https://github.com/Thiwanka49/Ceyloncofee-Research/blob/main/550847209_671150316017200_6014927099350871654_n.jpg" alt="Ceylon Coffee Logo" width="300"></center>
+<img src="https://github.com/Thiwanka49/Ceyloncoffee-Research/blob/main/Untitled%20Diagram.drawio.png" alt="Main diagram" width="300"></center>
 </p>
 
 ---

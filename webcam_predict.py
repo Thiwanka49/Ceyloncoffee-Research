@@ -1,170 +1,166 @@
+import os
 import cv2
 import torch
 import timm
-from PIL import Image
 from torchvision import transforms
-from collections import deque
+from PIL import Image
 
-# =====================
-# CONFIG
-# =====================
+
+# ============================================================
+# MODEL PATHS
+# ============================================================
 TYPE_CKPT   = "models/bean_type_best.pt"
 DEFECT_CKPT = "models/defect_best.pt"
 
-TYPE_GATE   = 0.80     # stricter gate for type
-DEFECT_GATE = 0.70
-GOOD_GATE   = 0.80
-CLOSE_MARGIN = 0.10
+# MUST match ImageFolder class order used in training
+TYPE_CLASSES   = ["arabica", "robusta"]
+DEFECT_CLASSES = ["broken", "good", "severe_defect"]
 
-CENTER_ROI_RATIO = 0.6     # 60% center crop (IMPORTANT)
-RUN_EVERY_N_FRAMES = 8     # increase if laggy
-CAM_INDEX = 0              # laptop webcam
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# buffers for smoothing
-type_buffer = deque(maxlen=10)
-defect_buffer = deque(maxlen=10)
+IMG_SIZE = 512
 
 
-# =====================
-# LOAD MODEL
-# =====================
-def load_ckpt(path):
-    ckpt = torch.load(path, map_location=device)
+# ============================================================
+# ROI + GATING SETTINGS
+# ============================================================
+ROI_SCALE = 0.40                 # smaller square
+NO_BEAN_VAR_THRESH = 35.0        # lower = stricter "no bean"
+
+TYPE_CONF_THRESH   = 0.75
+DEFECT_CONF_THRESH = 0.70
+MARGIN_THRESH      = 0.15
+
+
+# ============================================================
+# UTILS
+# ============================================================
+def ensure_exists(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Missing: {path}")
+
+def center_square_roi(frame, scale=0.40):
+    h, w = frame.shape[:2]
+    side = int(min(h, w) * scale)
+    cx, cy = w // 2, h // 2
+    x1 = max(cx - side // 2, 0)
+    y1 = max(cy - side // 2, 0)
+    x2 = min(x1 + side, w)
+    y2 = min(y1 + side, h)
+    return frame[y1:y2, x1:x2], (x1, y1, x2, y2)
+
+def no_bean_filter(roi_bgr, thresh):
+    gray = cv2.cvtColor(roi_bgr, cv2.COLOR_BGR2GRAY)
+    var = cv2.Laplacian(gray, cv2.CV_64F).var()
+    return var < thresh, var
+
+def load_model(ckpt_path, num_classes, device):
+    ensure_exists(ckpt_path)
     model = timm.create_model(
-        ckpt["model_name"],
+        "mobilenetv3_large_100",
         pretrained=False,
-        num_classes=len(ckpt["class_names"])
+        num_classes=num_classes
     )
-    model.load_state_dict(ckpt["model_state"])
-    model.to(device).eval()
-    return model, ckpt["img_size"], ckpt["class_names"]
+    ckpt = torch.load(ckpt_path, map_location=device)
+    if isinstance(ckpt, dict) and "model_state" in ckpt:
+        model.load_state_dict(ckpt["model_state"])
+    else:
+        model.load_state_dict(ckpt)
+    model.to(device)
+    model.eval()
+    return model
 
 
-def get_transform(img_size):
-    return transforms.Compose([
-        transforms.Resize((img_size, img_size)),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            [0.485, 0.456, 0.406],
-            [0.229, 0.224, 0.225]
-        ),
-    ])
-
+TFM = transforms.Compose([
+    transforms.Resize((IMG_SIZE, IMG_SIZE)),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
 
 @torch.no_grad()
-def predict(model, tf, pil_img, class_names):
-    x = tf(pil_img).unsqueeze(0).to(device)
-    probs = torch.softmax(model(x), dim=1)[0].cpu()
-    idx = int(torch.argmax(probs))
-    return class_names[idx], float(probs[idx]), probs.tolist()
+def predict_probs(model, roi_bgr, device):
+    rgb = cv2.cvtColor(roi_bgr, cv2.COLOR_BGR2RGB)
+    pil = Image.fromarray(rgb)
+    x = TFM(pil).unsqueeze(0).to(device)
+    logits = model(x)
+    return torch.softmax(logits, dim=1).squeeze(0)
+
+def gate_unknown(probs, conf_thresh, margin_thresh):
+    top2 = torch.topk(probs, 2)
+    p1 = float(top2.values[0])
+    p2 = float(top2.values[1])
+    idx = int(top2.indices[0])
+    margin = p1 - p2
+    unknown = (p1 < conf_thresh) or (margin < margin_thresh)
+    return unknown, idx, p1, margin
 
 
-def smart_defect_decision(pred, conf, probs, class_names):
-    if conf < DEFECT_GATE:
-        return "UNKNOWN"
-
-    if pred == "good":
-        good_i = class_names.index("good")
-        if probs[good_i] < GOOD_GATE:
-            return "UNKNOWN"
-
-        if "broken" in class_names:
-            broken_i = class_names.index("broken")
-            if (probs[good_i] - probs[broken_i]) < CLOSE_MARGIN:
-                return "UNKNOWN"
-
-    return pred
-
-
-# =====================
+# ============================================================
 # MAIN
-# =====================
+# ============================================================
 def main():
-    print("🔄 Loading models...")
-    type_model, type_size, type_classes = load_ckpt(TYPE_CKPT)
-    defect_model, defect_size, defect_classes = load_ckpt(DEFECT_CKPT)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("✅ Device:", device)
 
-    type_tf = get_transform(type_size)
-    defect_tf = get_transform(defect_size)
+    type_model   = load_model(TYPE_CKPT, len(TYPE_CLASSES), device)
+    defect_model = load_model(DEFECT_CKPT, len(DEFECT_CLASSES), device)
 
-    cap = cv2.VideoCapture(CAM_INDEX)
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        print("❌ Cannot open camera")
-        return
+        raise RuntimeError("❌ Cannot open webcam")
 
-    frame_count = 0
-    last_type = "UNKNOWN"
-    last_defect = "UNKNOWN"
-
-    print("✅ Webcam running — place bean inside GREEN BOX")
-    print("👉 Press Q to quit")
+    print("🎥 Webcam running (Type + Defect). Press Q to quit.")
 
     while True:
-        ret, frame = cap.read()
-        if not ret:
+        ok, frame = cap.read()
+        if not ok:
             break
 
-        h, w, _ = frame.shape
+        roi, (x1, y1, x2, y2) = center_square_roi(frame, ROI_SCALE)
+        is_no_bean, var = no_bean_filter(roi, NO_BEAN_VAR_THRESH)
 
-        # ===== ROI (CRITICAL FIX) =====
-        roi_size = int(min(h, w) * CENTER_ROI_RATIO)
-        x1 = (w - roi_size) // 2
-        y1 = (h - roi_size) // 2
-        x2 = x1 + roi_size
-        y2 = y1 + roi_size
+        if is_no_bean:
+            cv2.rectangle(frame, (x1,y1), (x2,y2), (0,0,255), 3)
+            cv2.putText(frame, f"NO BEAN DETECTED (var={var:.1f})",
+                        (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
+                        (0,0,255), 2)
+        else:
+            cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 2)
+            cv2.putText(frame, f"ROI var={var:.1f}",
+                        (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
+                        (255,255,255), 2)
 
-        roi = frame[y1:y2, x1:x2]
-
-        frame_count += 1
-
-        if frame_count % RUN_EVERY_N_FRAMES == 0:
-            rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-            pil_img = Image.fromarray(rgb)
-
-            # ---- TYPE ----
-            t_pred, t_conf, t_probs = predict(
-                type_model, type_tf, pil_img, type_classes
+            # ---------- Bean Type ----------
+            t_probs = predict_probs(type_model, roi, device)
+            t_unk, t_idx, t_conf, t_margin = gate_unknown(
+                t_probs, TYPE_CONF_THRESH, MARGIN_THRESH
             )
+            if t_unk:
+                t_text = f"Type: UNKNOWN (p={t_conf:.2f})"
+                t_col = (0,255,255)
+            else:
+                t_text = f"Type: {TYPE_CLASSES[t_idx]} (p={t_conf:.2f})"
+                t_col = (0,255,0)
+            cv2.putText(frame, t_text, (10,65),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, t_col, 2)
 
-            final_type = t_pred if t_conf >= TYPE_GATE else "UNKNOWN"
-            type_buffer.append(final_type)
-            last_type = max(set(type_buffer), key=type_buffer.count)
-
-            # ---- DEFECT ----
-            d_pred, d_conf, d_probs = predict(
-                defect_model, defect_tf, pil_img, defect_classes
+            # ---------- Defect ----------
+            d_probs = predict_probs(defect_model, roi, device)
+            d_unk, d_idx, d_conf, d_margin = gate_unknown(
+                d_probs, DEFECT_CONF_THRESH, MARGIN_THRESH
             )
+            if d_unk:
+                d_text = f"Defect: UNKNOWN (p={d_conf:.2f})"
+                d_col = (0,255,255)
+            else:
+                d_text = f"Defect: {DEFECT_CLASSES[d_idx]} (p={d_conf:.2f})"
+                d_col = (0,255,0)
+            cv2.putText(frame, d_text, (10,100),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, d_col, 2)
 
-            final_defect = smart_defect_decision(
-                d_pred, d_conf, d_probs, defect_classes
-            )
-            defect_buffer.append(final_defect)
-            last_defect = max(set(defect_buffer), key=defect_buffer.count)
-
-        # ===== DRAW UI =====
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-        cv2.putText(frame,
-                    f"Type: {last_type}",
-                    (20, 40),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (0, 255, 0),
-                    2)
-
-        cv2.putText(frame,
-                    f"Quality: {last_defect}",
-                    (20, 80),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (0, 255, 0),
-                    2)
-
-        cv2.imshow("Ceyloncoffee | Live IoT Camera Test", frame)
-
-        if cv2.waitKey(1) & 0xFF in [ord('q'), ord('Q')]:
+        cv2.imshow("CeylonCoffee – Bean Type + Defect", frame)
+        if cv2.waitKey(1) & 0xFF in (ord('q'), ord('Q')):
             break
 
     cap.release()

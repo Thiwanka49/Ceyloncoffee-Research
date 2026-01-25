@@ -1,0 +1,29 @@
+{
+  "name": "ceyloncoffee-research",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "web": "expo start --web",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "reset-project": "node scripts/reset-project.js"
+  },
+  "dependencies": {
+    "expo": "~54.0.0",
+    "expo-router": "~3.5.0",
+    "expo-camera": "~15.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.5",
+    "react-native-gesture-handler": "~2.20.0",
+    "react-native-reanimated": "~3.16.0",
+    "react-native-screens": "~4.1.0",
+    "react-native-web": "~0.19.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/react": "~18.2.45",
+    "typescript": "~5.3.3"
+  },
+  "private": true
+}

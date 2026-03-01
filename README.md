@@ -9,7 +9,7 @@ The second component addresses Coffee Price and Demand Prediction at both domest
 
 The third component focuses on Predictive Resource Allocation for Labor and Transportation. This module forecasts the number of workers required for harvesting, picking, and loading on daily, weekly, monthly, and yearly bases. It also predicts transportation needs for moving coffee beans from farms to processing factories in both short term and medium-term horizons. By considering harvest size, weather conditions, road quality, and vehicle availability, the system minimizes inefficiencies, reduces costs, and prevents delays. A scheduling and optimization dashboard provides managers with real-time visibility into workforce plans, transport requirements, cost estimates, and alerts for resource shortages.
 
-The fourth component focuses on automated coffee bean quality assessment using image-based deep learning models. It is designed to classify coffee beans into Arabica and Robusta types and to identify quality conditions such as Good, Broken, and Severe Defect from single images captured under real-world conditions. The system uses convolutional neural networks trained on locally collected Sri Lankan coffee bean datasets. The models support confidence-based predictions to reduce misclassification in uncertain cases, ensuring reliable quality evaluation during sorting, packaging, and export preparation. This module helps improve consistency in grading, reduce manual inspection effort, and support higher quality standards in the coffee export process.
+The fourth component used to create the decisions for calculating fertilizer requirement takes into account many parameters: coffee type; plot size measured in perches; number of plants per acre; nutrient availability levels of soil, such as Nitrogen, Phosphorus, Potassium; the growth stage of the crop; and any diseases that are present in the crop, as well as their relative severity; patterns in rainfall; temperature; and anticipated yield. The data collected then has been analyzed using a supervised regression-based approach, in order to derive an appropriate estimate of the amount of fertilizer per acreage required. There are many differing variables which can affect how the soil will react to the crop’s demand and how many inputs/outputs will be generated from that reaction, so ensemble learning methods have been used to represent the wide range of interactions between the condition of the soil, the crops’ demand from nutrients, and the yield targets. Since we also wanted to account for how the disease severity may affect the crops were displayed using a normalized, 0-1 scale. In addition, we used environmental conditions (i.e. rainfall, humidity, and temperature) to adjust the severity results for any given cycle so that we could accurately determine how much pesticide to apply. During harvest periods, the calculation of anticipated amount of crop to harvest is calculated. 
 
 ---
 # Main Diagram
@@ -54,21 +54,20 @@ The fourth component focuses on automated coffee bean quality assessment using i
 
 ---
 
-## 3️⃣ Predictive Resource Allocation (Labor & Transportation)  
+## 3️⃣AI Based Fertilizer, Pest Control, and Harvest Resource Planning System
 **Owner:** Rumalya
 
 ### 🔍 Key Components
-- Labor forecasting model  
-- Transportation demand prediction model  
-- Scheduling & optimization dashboard  
+- Multi parameter soil & crop data collection module 
+- Disease severity normalization system  
+- Harvest yield prediction and resource planning module
 
 ### 🎯 Objectives
-- Predict required workers for harvesting, loading, etc.  
-- Estimate vehicles needed for bean transport (daily → seasonal)  
-- Reduce extra cost & waiting time  
-- Connect with yield/weather data for improved accuracy  
-- Provide dashboards with schedules, costs, and alerts  
-
+-Calculate precise fertilizer requirements based on soil nutrients and crop demand 
+- Optimize pesticide usage by adjusting disease severity with environmental conditions
+- Predict harvest yield during harvesting periods for better resource allocation
+- Reduce input costs while maximizing crop productivity
+- Support sustainable and data-driven coffee cultivation in Sri Lanka
 ---
 
 ## 4️⃣ Coffee Bean Type & Grade Identification  

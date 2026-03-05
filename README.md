@@ -13,7 +13,7 @@ The fourth component is designed to improve the quality assessment process of co
 
 
 ---
-# Main Diagram
+# System Overvie Diagram
 <p>
 <img src="https://github.com/Thiwanka49/Ceyloncoffee-Research/blob/main/Untitled%20Diagram.drawio.png" alt="Main diagram" width="1200"">
 </p>
